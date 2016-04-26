@@ -1,0 +1,128 @@
+{% load i18n %}
+{% load staticfiles %}
+<html !DOCTYPE=html>
+<head><title>hi</title></head>
+<body>
+<div>
+	<h1>Hello, world!</h1>.
+
+	<h1>{% trans mystr %}</h1>
+	<h1>{{ mystr }}</h1>
+</div>
+
+<div>
+
+<form action="/i18n/setlang/" method="post">
+{% csrf_token %}
+    <input name="next" type="hidden" value="/localedemo" />
+
+    <select name="language">
+
+        {% for lang in LANGUAGES %}
+
+                <option value="{{ lang.0 }}" {% if lang.0 == SELECTEDLANG %}selected{% endif %}>{% if lang.1 == 'Chinese' %}Español{% else %}{{ lang.1 }}{% endif %}</option>
+
+        {% endfor %}
+
+    </select>
+
+    <input type="submit" value="Go" />
+
+</form>
+{##}
+{##}
+{% get_available_languages as LANGUAGES %}
+    <form action="/i18n/setlang/" method="post">{% csrf_token %}
+      <input name="next" type="hidden" value="/localedemo" />
+        {% csrf_token %}
+        <select name="language">
+          {% for lang in LANGUAGES %}
+            <option value="{{ lang.0 }}">{{ lang.1 }}</option>
+          {% endfor %}
+        </select>
+      <input type="submit" value="Go" />
+    </form>
+
+<form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+    <input name="next" type="hidden" value="/localedemo" />
+    <select name="language">
+        {% get_current_language as LANGUAGE_CODE %}
+
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected="selected"{% endif %}>
+                    {{ language.name_local }} ({{ language.code }})
+            </option>
+        {% endfor %}
+    </select>
+{{ LANGUAGE_CODE }}
+
+    <input type="submit" value="Go" />
+</form>
+
+
+
+</div>
+
+<div>
+
+    {% get_available_languages as LANGUAGES %}
+<form action="{% url "set_language" %}" method="post" class="navbar-form navbar-right">
+{% csrf_token %}
+<div class="form-group">
+    <select name="language" class="form-control" onchange="this.form.submit()">
+    {% for language in LANGUAGES %}
+    <option value="{{ language.0 }}"
+        {% if language.0 == LANGUAGE_CODE %}selected="selected"{% endif %}>
+        {{ language.1 }}
+    </option>
+    {% endfor %}
+    </select>
+</div>
+</form>
+
+</div>
+
+{##}
+{#<div>#}
+{##}
+{#    {% get_current_language as LANGUAGE_CODE %}#}
+{#<!-- Current language: {{ LANGUAGE_CODE }} -->#}
+{#<p>{% trans "Welcome to my site." %}</p>#}
+{##}
+{#{% language 'zh-CN' %}#}
+{#    {% get_current_language as LANGUAGE_CODE %}#}
+{#    <!-- Current language: {{ LANGUAGE_CODE }} -->#}
+{#    <p>{% trans "Welcome to my site." %}</p>#}
+{#{% endlanguage %}#}
+{#</div>#}
+{##}
+{##}
+{##}
+{#{% language 'en' %}#}
+{#    {% get_current_language as LANGUAGE_CODE %}#}
+{#    <!-- Current language: {{ LANGUAGE_CODE }} -->#}
+{#    <p>{% trans "Welcome to my site." %}</p>#}
+{#{% endlanguage %}#}
+{##}
+{#{% language 'zh_CN' %}#}
+{#    {% get_current_language as LANGUAGE_CODE %}#}
+{#    <!-- Current language: {{ LANGUAGE_CODE }} -->#}
+{#    <p>{% trans "Welcome to my site." %}</p>#}
+{#{% endlanguage %}#}
+{##}
+{##}
+{#{% get_language_info for LANGUAGE_CODE as lang %}#}
+{#{% get_language_info for "zh-cn" as lang %}#}
+{##}
+{#Language code: {{ lang.code }}<br />#}
+{#Name of language: {{ lang.name_local }}<br />#}
+{#Name in English: {{ lang.name }}<br />#}
+{#Bi-directional: {{ lang.bidi }}#}
+{#Name in the active language: {{ lang.name_translated }}#}
+<script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
+<script type="text/javascript" src="{% static "test.js" %}"></script>
+</body>
+</html>
+
